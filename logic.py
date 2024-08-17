@@ -4,6 +4,7 @@ from PyQt6.QtGui import QPixmap
 from gui import *
 from api_location import *
 from api_weatherdata import *
+from datetime import datetime
 import requests
 import qtmodern.windows
 import os
@@ -38,7 +39,7 @@ class Logic(QMainWindow, Ui_MainWindow):
                             'temps': []
                             }
                        }
-        # create dictionary that links the API's weather codes to their appropriate icons
+        # create dictionary that links the APIs weather codes to their appropriate icons
         self.icons = {'0': "icons/clear_sky.png",
                       **{str(i): "icons/partly_cloudy.png" for i in [1, 2, 3]},
                       **{str(i): "icons/fog.png" for i in [45, 48]},
@@ -151,7 +152,12 @@ class Logic(QMainWindow, Ui_MainWindow):
 
         # set labels for weekly forecast
         for i in range(7):
-            self.labels['daily']['day'][i].setText(f"{daily_weather.iloc[i]['date'].day_name()}")
+            if i == 0:  # sets the first label in the weekly forecast to "Today" if it corresponds to today
+                today = datetime.now().date().strftime("%Y-%m-%d")
+                self.labels['daily']['day'][i].setText("Today") if today == str(daily_weather.iloc[i]['date'])[:10] \
+                    else f"{daily_weather.iloc[i]['date'].day_name()}"
+            else:
+                self.labels['daily']['day'][i].setText(f"{daily_weather.iloc[i]['date'].day_name()}")
             self.labels['daily']['precip'][i].setText(f"{daily_weather.iloc[i]['precip_sum']:.2f} in")
             self.labels['daily']['temps'][i].setText(f"{int(daily_weather.iloc[i]['temp_max'])}°/"
                                                      f"{int(daily_weather.iloc[i]['temp_min'])}°")
@@ -191,7 +197,10 @@ class CustomModernWindow(qtmodern.windows.ModernWindow):
     """
     def setupUi(self) -> None:
         super().setupUi()  # Call the original setupUi method
-        self.btnMaximize.hide() # Remove the maximize button from the title bar layout
+
+        # Remove the maximize button from the title bar layout
+        # qtmodern apparently shows this by default, and it maximizes the window even if the window size is fixed
+        self.btnMaximize.hide()
 
 
 def get_location() -> tuple[list[str] | None, str | None, str | None]:

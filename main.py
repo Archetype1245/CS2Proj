@@ -9,10 +9,10 @@ def main() -> None:
     qtmodern.styles.dark(app)
 
     window = Logic()
-    window.center()
+    window.center()  # centers window since qtmodern doesn't by default
 
     modern_window = CustomModernWindow(window)
-    modern_window.setFixedSize(modern_window.size())
+    modern_window.setFixedSize(modern_window.size())  # sets window to fixed size since qtmodern overrides
     modern_window.show()
     app.exec()
 

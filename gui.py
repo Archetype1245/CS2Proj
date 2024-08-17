@@ -8,22 +8,26 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+"""
+File generated via QT Designer.
+I think the only modification I made in the code was to set frame_weather_info to hidden by detault.
+"""
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(480, 770)
+        MainWindow.resize(480, 800)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QtCore.QSize(480, 770))
-        MainWindow.setMaximumSize(QtCore.QSize(480, 770))
+        MainWindow.setMinimumSize(QtCore.QSize(480, 800))
+        MainWindow.setMaximumSize(QtCore.QSize(480, 800))
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.frame_weather_info = QtWidgets.QFrame(parent=self.centralwidget)
-        self.frame_weather_info.setGeometry(QtCore.QRect(6, 85, 468, 640))
+        self.frame_weather_info.setGeometry(QtCore.QRect(6, 85, 468, 700))
         self.frame_weather_info.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.frame_weather_info.setFrameShadow(QtWidgets.QFrame.Shadow.Plain)
         self.frame_weather_info.setObjectName("frame_weather_info")
@@ -581,7 +585,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.hourly_widget_11, 1, 9, 1, 1)
         self.scrollArea_hourly.setWidget(self.scrollAreaWidgetContents)
         self.scrollArea_daily = QtWidgets.QScrollArea(parent=self.frame_weather_info)
-        self.scrollArea_daily.setGeometry(QtCore.QRect(0, 456, 468, 205))
+        self.scrollArea_daily.setGeometry(QtCore.QRect(0, 456, 468, 225))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

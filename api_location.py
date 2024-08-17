@@ -1,5 +1,9 @@
 import requests
 
+"""
+File largely created via the API tool on open-meteo.
+Added exception handling to deal with bad responses from the server.
+"""
 
 def get_coordinates(location):
     # Base URL for Open-Meteo's Geocoding API

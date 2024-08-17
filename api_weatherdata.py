@@ -5,8 +5,21 @@ from retry_requests import retry
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
+"""
+File largely created via the automated API tool on open-meteo.
+Added some variable name changes.
+Added better timezone implementation, variables for lat, long, timezone.
+Added reformatting of dates/times.
+"""
+
 
 def get_weather_data(lat, long, timezone):
+    """
+    Get weather data from open-meteo API.
+    :param lat: Latitude for provided location.
+    :param long: Longitude for provided location.
+    :param timezone: Timezone for provided location.
+    """
     pd.set_option('display.max_columns', None)
     pd.set_option('display.max_rows', None)
 
