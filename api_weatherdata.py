@@ -46,7 +46,13 @@ def get_weather_data(lat, long, timezone):
         "timeformat": "unixtime",
         "timezone": timezone
     }
-    responses = openmeteo.weather_api(url, params=params)
+
+    try:
+        responses = openmeteo.weather_api(url, params=params)
+    except Exception as e:
+        print(f"Error fetching location: {e}")
+        return None, None, None
+
 
     # Process first location. Add a for-loop for multiple locations or weather models
     response = responses[0]
@@ -131,4 +137,4 @@ def get_weather_data(lat, long, timezone):
 
 if __name__ == "__main__":
     lat, long, timezone = 41.25626, -95.94043, 'America/Chicago'
-    get_weather_data(lat,long, timezone)
+    get_weather_data(lat, long, timezone)

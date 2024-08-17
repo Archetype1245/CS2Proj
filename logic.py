@@ -32,13 +32,13 @@ class Logic(QMainWindow, Ui_MainWindow):
                             'img': [],
                             'temp': []
                             },
-                       'daily': {
+                        'daily': {
                             'day': [],
                             'precip': [],
                             'img': [],
                             'temps': []
                             }
-                       }
+                        }
         # create dictionary that links the APIs weather codes to their appropriate icons
         self._icons = {'0': "icons/clear_sky.png",
                        **{str(i): "icons/partly_cloudy.png" for i in [1, 2, 3]},
@@ -125,52 +125,58 @@ class Logic(QMainWindow, Ui_MainWindow):
         current_weather, hourly_weather, daily_weather = (get_weather_data(
                                                             self.coords[0], self.coords[1], self.timezone))
 
-        # set labels for current weather
-        self.label_current_location.setText(self.location)
-        self.label_today_temp.setText(f" {current_weather['temperature_2m']}°")
-        self.label_today_feels_like.setText(f"Feels like {current_weather['apparent_temperature']}°")
-        self.label_today_precip.setText(f"Precipitation:\n{current_weather['precipitation']} in")
-        self.label_today_wind.setText(f"Wind Speed:\n{current_weather['wind_speed']} mph")
-        self.label_today_humidity.setText(f"Humidity:\n{current_weather['humidity']}%")
+        if current_weather is not None and hourly_weather is not None and daily_weather is not None:
+            # set labels for current weather
+            self.label_current_location.setText(self.location)
+            self.label_today_temp.setText(f" {current_weather['temperature_2m']}°")
+            self.label_today_feels_like.setText(f"Feels like {current_weather['apparent_temperature']}°")
+            self.label_today_precip.setText(f"Precipitation:\n{current_weather['precipitation']} in")
+            self.label_today_wind.setText(f"Wind Speed:\n{current_weather['wind_speed']} mph")
+            self.label_today_humidity.setText(f"Humidity:\n{current_weather['humidity']}%")
 
-        label = self.img_today_weather
-        weather_code = f"{int(current_weather['weather_code'])}"
-
-        # Assigns proper icons to corresponding labels
-        self.validate_icon(label, weather_code)
-
-        # set labels for hourly weather
-        for i in range(12):
-            self._labels['hourly']['time'][i].setText(f"{hourly_weather.iloc[i]['date']}")
-            self._labels['hourly']['temp'][i].setText(f"{int(hourly_weather.iloc[i]['temperature_2m'])}°")
-
-            label = self._labels['hourly']['img'][i]
-            weather_code = f"{int(hourly_weather.iloc[i]['weather_code'])}"
+            label = self.img_today_weather
+            weather_code = f"{int(current_weather['weather_code'])}"
 
             # Assigns proper icons to corresponding labels
             self.validate_icon(label, weather_code)
 
-        # set labels for weekly forecast
-        for i in range(7):
-            if i == 0:  # sets the first label in the weekly forecast to "Today" if it corresponds to today
-                today = datetime.now().date().strftime("%Y-%m-%d")
-                self._labels['daily']['day'][i].setText("Today") if today == str(daily_weather.iloc[i]['date'])[:10] \
-                    else f"{daily_weather.iloc[i]['date'].day_name()}"
-            else:
-                self._labels['daily']['day'][i].setText(f"{daily_weather.iloc[i]['date'].day_name()}")
-            self._labels['daily']['precip'][i].setText(f"{daily_weather.iloc[i]['precip_sum']:.2f} in")
-            self._labels['daily']['temps'][i].setText(f"{int(daily_weather.iloc[i]['temp_max'])}°/"
-                                                     f"{int(daily_weather.iloc[i]['temp_min'])}°")
+            # set labels for hourly weather
+            for i in range(12):
+                self._labels['hourly']['time'][i].setText(f"{hourly_weather.iloc[i]['date']}")
+                self._labels['hourly']['temp'][i].setText(f"{int(hourly_weather.iloc[i]['temperature_2m'])}°")
 
-            label = self._labels['daily']['img'][i]
-            weather_code = f"{int(daily_weather.iloc[i]['weather_code'])}"
+                label = self._labels['hourly']['img'][i]
+                weather_code = f"{int(hourly_weather.iloc[i]['weather_code'])}"
 
-            # Assigns proper icons to corresponding labels
-            self.validate_icon(label, weather_code)
+                # Assigns proper icons to corresponding labels
+                self.validate_icon(label, weather_code)
 
-        # hide the frame housing the location error message and shows the frame that displays the weather info
-        self.frame.setHidden(True)
-        self.frame_weather_info.setHidden(False)
+            # set labels for weekly forecast
+            for i in range(7):
+                if i == 0:  # sets the first label in the weekly forecast to "Today" if it corresponds to today
+                    today = datetime.now().date().strftime("%Y-%m-%d")
+                    self._labels['daily']['day'][i].setText("Today") if today == str(daily_weather.iloc[i]['date'])[:10] \
+                        else f"{daily_weather.iloc[i]['date'].day_name()}"
+                else:
+                    self._labels['daily']['day'][i].setText(f"{daily_weather.iloc[i]['date'].day_name()}")
+                self._labels['daily']['precip'][i].setText(f"{daily_weather.iloc[i]['precip_sum']:.2f} in")
+                self._labels['daily']['temps'][i].setText(f"{int(daily_weather.iloc[i]['temp_max'])}°/"
+                                                          f"{int(daily_weather.iloc[i]['temp_min'])}°")
+
+                label = self._labels['daily']['img'][i]
+                weather_code = f"{int(daily_weather.iloc[i]['weather_code'])}"
+
+                # Assigns proper icons to corresponding labels
+                self.validate_icon(label, weather_code)
+
+            # hide the frame housing the location error message and shows the frame that displays the weather info
+            self.frame.setHidden(True)
+            self.frame_weather_info.setHidden(False)
+
+        else:
+            self.frame_weather_info.setHidden(True)
+            self.label_location_error.setText("Could not retrieve weather data.\nPlease try again.")
+            self.frame.setHidden(False)
 
     def keyPressEvent(self, event) -> None:
         """Overrides the existing method to simulate clicking the search button when a user hits Enter."""
