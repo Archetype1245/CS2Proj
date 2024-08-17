@@ -27,7 +27,7 @@ class Logic(QMainWindow, Ui_MainWindow):
 
         # empty dictionary to house various labels.
         # Easy solution since the gui file was largely generated via QT Designer
-        self.labels = {'hourly': {
+        self._labels = {'hourly': {
                             'time': [],
                             'img': [],
                             'temp': []
@@ -40,30 +40,30 @@ class Logic(QMainWindow, Ui_MainWindow):
                             }
                        }
         # create dictionary that links the APIs weather codes to their appropriate icons
-        self.icons = {'0': "icons/clear_sky.png",
-                      **{str(i): "icons/partly_cloudy.png" for i in [1, 2, 3]},
-                      **{str(i): "icons/fog.png" for i in [45, 48]},
-                      **{str(i): "icons/drizzle.png" for i in [51, 53, 55]},
-                      **{str(i): "icons/freezing_rain.png" for i in [56, 57, 66, 67]},
-                      **{str(i): "icons/rain.png" for i in [61, 63, 65]},
-                      **{str(i): "icons/snow.png" for i in [71, 73, 75, 77, 85, 86]},
-                      **{str(i): "icons/thunderstorm.png" for i in [80, 81, 82, 95, 96, 99]}
-                      }
+        self._icons = {'0': "icons/clear_sky.png",
+                       **{str(i): "icons/partly_cloudy.png" for i in [1, 2, 3]},
+                       **{str(i): "icons/fog.png" for i in [45, 48]},
+                       **{str(i): "icons/drizzle.png" for i in [51, 53, 55]},
+                       **{str(i): "icons/freezing_rain.png" for i in [56, 57, 66, 67]},
+                       **{str(i): "icons/rain.png" for i in [61, 63, 65]},
+                       **{str(i): "icons/snow.png" for i in [71, 73, 75, 77, 85, 86]},
+                       **{str(i): "icons/thunderstorm.png" for i in [80, 81, 82, 95, 96, 99]}
+                       }
         # Validates the icon paths, setting the values to a generic blank image if the path does not exist.
-        self.icons = {key: value if os.path.exists(value) else "<img>" for key, value in self.icons.items()}
+        self._icons = {key: value if os.path.exists(value) else "<img>" for key, value in self._icons.items()}
 
         # add hourly labels to dictionary
         for i in range(12):
-            self.labels['hourly']['time'].append(getattr(self, f'label_hourly_time_{i}'))
-            self.labels['hourly']['img'].append(getattr(self, f'label_hourly_img_{i}'))
-            self.labels['hourly']['temp'].append(getattr(self, f'label_hourly_temp_{i}'))
+            self._labels['hourly']['time'].append(getattr(self, f'label_hourly_time_{i}'))
+            self._labels['hourly']['img'].append(getattr(self, f'label_hourly_img_{i}'))
+            self._labels['hourly']['temp'].append(getattr(self, f'label_hourly_temp_{i}'))
 
         # add daily labels to dictionary
         for i in range(7):
-            self.labels['daily']['day'].append(getattr(self, f'label_daily_day_{i}'))
-            self.labels['daily']['precip'].append(getattr(self, f'label_daily_precip_{i}'))
-            self.labels['daily']['img'].append(getattr(self, f'label_daily_img_{i}'))
-            self.labels['daily']['temps'].append(getattr(self, f'label_daily_temps_{i}'))
+            self._labels['daily']['day'].append(getattr(self, f'label_daily_day_{i}'))
+            self._labels['daily']['precip'].append(getattr(self, f'label_daily_precip_{i}'))
+            self._labels['daily']['img'].append(getattr(self, f'label_daily_img_{i}'))
+            self._labels['daily']['temps'].append(getattr(self, f'label_daily_temps_{i}'))
 
         self.pushButton_search.clicked.connect(self.search)
         self.coords, self.location, self.timezone = get_location()  # attempts to get a user's current location
@@ -79,9 +79,9 @@ class Logic(QMainWindow, Ui_MainWindow):
         :param weather_code: The weather code obtain from API
         """
         if weather_code in Logic.VALID_CODES:
-            if self.icons[weather_code] != "<img>":
+            if self._icons[weather_code] != "<img>":
                 label.setPixmap(QPixmap(
-                    self.icons[weather_code]).scaled(label.width(), label.height()))
+                    self._icons[weather_code]).scaled(label.width(), label.height()))
         else:
             label.setText("<img>")
 
@@ -141,10 +141,10 @@ class Logic(QMainWindow, Ui_MainWindow):
 
         # set labels for hourly weather
         for i in range(12):
-            self.labels['hourly']['time'][i].setText(f"{hourly_weather.iloc[i]['date']}")
-            self.labels['hourly']['temp'][i].setText(f"{int(hourly_weather.iloc[i]['temperature_2m'])}°")
+            self._labels['hourly']['time'][i].setText(f"{hourly_weather.iloc[i]['date']}")
+            self._labels['hourly']['temp'][i].setText(f"{int(hourly_weather.iloc[i]['temperature_2m'])}°")
 
-            label = self.labels['hourly']['img'][i]
+            label = self._labels['hourly']['img'][i]
             weather_code = f"{int(hourly_weather.iloc[i]['weather_code'])}"
 
             # Assigns proper icons to corresponding labels
@@ -154,15 +154,15 @@ class Logic(QMainWindow, Ui_MainWindow):
         for i in range(7):
             if i == 0:  # sets the first label in the weekly forecast to "Today" if it corresponds to today
                 today = datetime.now().date().strftime("%Y-%m-%d")
-                self.labels['daily']['day'][i].setText("Today") if today == str(daily_weather.iloc[i]['date'])[:10] \
+                self._labels['daily']['day'][i].setText("Today") if today == str(daily_weather.iloc[i]['date'])[:10] \
                     else f"{daily_weather.iloc[i]['date'].day_name()}"
             else:
-                self.labels['daily']['day'][i].setText(f"{daily_weather.iloc[i]['date'].day_name()}")
-            self.labels['daily']['precip'][i].setText(f"{daily_weather.iloc[i]['precip_sum']:.2f} in")
-            self.labels['daily']['temps'][i].setText(f"{int(daily_weather.iloc[i]['temp_max'])}°/"
+                self._labels['daily']['day'][i].setText(f"{daily_weather.iloc[i]['date'].day_name()}")
+            self._labels['daily']['precip'][i].setText(f"{daily_weather.iloc[i]['precip_sum']:.2f} in")
+            self._labels['daily']['temps'][i].setText(f"{int(daily_weather.iloc[i]['temp_max'])}°/"
                                                      f"{int(daily_weather.iloc[i]['temp_min'])}°")
 
-            label = self.labels['daily']['img'][i]
+            label = self._labels['daily']['img'][i]
             weather_code = f"{int(daily_weather.iloc[i]['weather_code'])}"
 
             # Assigns proper icons to corresponding labels
